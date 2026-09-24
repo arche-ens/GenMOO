@@ -1,0 +1,2 @@
+ID,Smiles,HBD,LogP,MW,HBA,RB,AromaticRings,TPSA,MR,SAscore,Alerts,Lipinski_Violations,Lipinski_Ro5,Veber,Ghose_Filter,My_Rule,My_QED,pareto_rank
+GenMOO-10008,[O-1][N+1](=O)[C@@]12C(C)(C)[C@@]3([N+1]([O-1])=O)C[N@@H1+1](C1)[C@@H1](N(C2)C3)[C@@H1](O)[C@H1](O)[C@H1](O)[C@H1](O)CO,6,-4.967,407.4,10,7,0,195.11,90.403,6.972,2,1,True,False,False,0.288,0.177,226

@@ -1,0 +1,2 @@
+test_new: using original network trained with ChemDiv (1750k).
+test_refine1: using GeminiMol filtered ChemDiv (50k).
