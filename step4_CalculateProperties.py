@@ -38,7 +38,7 @@ def calc_properties(mol: Chem.rdchem.Mol):
 def add_properties(df: pd.DataFrame, smiles_column="Smiles"):
     """Calculate descriptors for each row and return an augmented DataFrame."""
     property_columns = ["HBD", "LogP", "MW", "HBA", "RB", "AromaticRings", "TPSA", "MR", "SAscore", "Alerts"]
-    rule_columns = ["Lipinski_Violations", "Lipinski_Ro5", "Veber", "Ghose_Filter", "My_Rule", "My_QED"]
+    rule_columns = ["Lipinski_Violations", "Lipinski_Ro5", "Veber", "Ghose_Filter", "My_Rule", "QED_w"]
     records = []
 
     for smiles in df[smiles_column]:

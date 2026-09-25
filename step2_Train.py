@@ -49,7 +49,7 @@ def main():
 
     bsize = min(config.BATCH_SIZE, N)
     n_batches = N // bsize
-    print(f"Batch size: {bsize} | batches per epoch: {n_batches} | epochs: {config.NUM_EPOCHS}")
+    print(f"Batch size: {bsize} | batches per epoch: {n_batches} | epochs: {config.NUM_EPOCHS} | LR: {config.LEARNING_RATE}")
 
     for epoch in range(1, config.NUM_EPOCHS + 1):
         perm = torch.randperm(N)
