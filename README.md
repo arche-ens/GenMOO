@@ -1,13 +1,8 @@
-# GenMOO
+<div align="center"> # GenMOO :partying_face::tada: </div>
+
 ## Introduction
 
-**GenMOO** is a multi-objective optimization pipeline for *de novo* molecule generation using a stacked-LSTM model trained on **SELFIES** instead of SMILES. 
-
-Through the LSTM generator, we have generated novel molecules and evaluated them via three scores: Docking score (target selectivity), SAscore (synthetic accessibility), and QED~w~ (drug-likeness). 
-
-Based on these three scores, we next performed a non-dominated sorting, picking out top Pareto fronts and utilizing these excellent molecules to fine-tune the model.
-
-After several turns of Pareto optimization, the model will tend to generate molecules with lower docking score, lower SAscore and higher QED~w~ score, and hopefully to expand the Pareto front.
+**GenMOO** is a multi-objective optimization pipeline for *de novo* molecule generation using a stacked-LSTM model trained on **SELFIES** instead of SMILES. Through the LSTM generator, we have generated novel molecules and evaluated them via three scores: **Docking score** (target selectivity), **SAscore** (synthetic accessibility), and **QED~w~** (drug-likeness). Based on these three scores, we next performed a **non-dominated sorting**, picking out top Pareto fronts and utilizing these excellent molecules to fine-tune the model. After several turns of Pareto optimization, the model will tend to generate molecules with lower docking score, lower SAscore and higher QED~w~ score, and hopefully to expand the Pareto front.
 
 [Self-referencing embedded strings](https://github.com/the-matter-lab/selfies) (SELFIES) is a 100% robust molecular string representation. Any sequence of SELFIES symbols can be decoded to a chemically valid molecule, which nearly eliminates invalid outputs. 
 
@@ -77,6 +72,10 @@ conda activate genmoo
 python step1_PrepareData.py
 ```
 
+> [!CAUTION]
+> This README file is going to be refined. :angry:
+
+
 ## Model Structure
 
 - 3 stacked LSTM layers (`hidden_size=1024`, `dropout=0.2`) + a linear head.
@@ -89,8 +88,3 @@ python step1_PrepareData.py
 - `START_TOKEN = "<start>"`, `END_TOKEN = "<end>"`, `PAD_TOKEN = "<pad>"`.
 - `SEQ_LEN = 100` (SELFIES symbols, incl. start/end).
 - `NUM_MOLECULES = 20`, `TEMPERATURE = 1.0`, etc. — editable as needed.
-
-
-## Notes
-
-- This README file is going to be refined.
