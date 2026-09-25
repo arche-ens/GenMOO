@@ -1,6 +1,5 @@
 # GenMOO
 ## Introduction
----
 
 **GenMOO** is a multi-objective optimization pipeline for *de novo* molecule generation using a stacked-LSTM model trained on **SELFIES** instead of SMILES. 
 
@@ -19,7 +18,6 @@ The [quantitative estimate of drug-likeness](https://www.nature.com/articles/nch
 [pymoo](https://pymoo.org/) offers state of the art single- and multi-objective optimization algorithms and many more features related to multi-objective optimization.
 
 ## Requirements
----
 ### System requirements
 
 **GenMOO** has been implemented using **Python 3** and is based on the **PyTorch** package. It has been tested on Linux (Ubuntu 20.04.6 LTS), and should also work on Windows as well as Mac OSX.
@@ -53,7 +51,6 @@ dependencies:
 ```
 
 ## Main pipeline
----
 
 ![Pipeline](./assets/model_structure.png "Pipeline")
 
@@ -68,7 +65,6 @@ dependencies:
 
 
 ## Quick start
----
 
 ```bash
 git clone https://github.com/arche-ens/GenMOO.git GenMOO
