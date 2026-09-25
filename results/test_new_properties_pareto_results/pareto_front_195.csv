@@ -1,4 +1,0 @@
-ID,Smiles,HBD,LogP,MW,HBA,RB,AromaticRings,TPSA,MR,SAscore,Alerts,Lipinski_Violations,Lipinski_Ro5,Veber,Ghose_Filter,My_Rule,My_QED,pareto_rank
-GenMOO-04886,OC[C@H1](O1)[C@H1](O)[C@H1](O)[C@@H1](O)[C@H1]1O[C@@H1]([C@@H1](O2)CO)[C@H1](O)[C@H1](O)[C@@H1]2NC(=CC=3[N+1]([O-1])=O)C=C(C(=O)[O-1])C=3,8,-5.006,505.409,15,8,1,264.6,107.45,4.806,2,3,False,False,False,0.175,0.128,195
-GenMOO-05895,OC[C@H1](O1)[C@@H1](O)[C@@H1](O)[C@@H1](O)[C@@H1]1O[C@@H1]([C@H1](O)CO)[C@H1](O)[C@@H1][C@@H1](OC(=O)C)[C@@H1]OC(=O)C,7,-4.254,440.398,13,11,0,212.67,93.66,5.135,1,2,False,False,False,0.2,0.136,195
-GenMOO-08420,C1OC(=O)C=C1[C@@H1](CC2)[C@](C)([C@@]23O)CC[C@@H1]4[C@]5(C=O)[C@](O)(CC[C@@H1]34)C[C@@H1](CC5)O[C@H1](O[C@@H1]6C)C[C@H1](OC)[C@@H1]6O[C@H1]7[C@@H1](O)[C@H1](O)[C@@H1](O)[C@@H1](O7)CO,6,0.258,710.814,14,8,0,210.9,170.831,5.784,3,3,False,False,False,0.088,0.138,195
