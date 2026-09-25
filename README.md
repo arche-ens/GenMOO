@@ -1,4 +1,4 @@
-<div align="center"> # GenMOO :partying_face::tada: </div>
+# GenMOO :partying_face::tada: 
 
 ## Introduction
 
