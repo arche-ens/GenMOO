@@ -1,0 +1,48 @@
+---
+config:
+  layout: elk
+  themeVariables:
+    lineColor: '#554236'
+    primaryTextColor: '#554236'
+    fontFamily: consolas
+    edgeLabelBackground: '#fff'
+---
+flowchart TB
+    A[("ChemDiv.txt")] --> B("PrepareData.py")
+    B --> D(["ChemDiv_kept.txt"]) & C("vocab.npy") & E("intsmiles.npz")
+    C --> H("Train.py") & I("GenerateMolecules.py") & N("Refine.py")
+    E --> H
+    H --> F("network.pth")
+    F --> I & N
+    I --> G(["new_molecules.txt"])
+    G --> J("Docking")
+    J --> K("CalculateProperties.py")
+    K --> L("NondominatedSorting.py")
+    L --> M(["top_molecules.txt"])
+    M --> N
+    N --> O("network_refined.pth")
+    O -- n times --> I
+    O --> P(["candidates"])
+
+     A:::green
+     B:::orange
+     D:::green
+     C:::blue
+     E:::pink
+     H:::orange
+     I:::orange
+     F:::purple
+     G:::green
+     J:::yellow
+     K:::orange
+     L:::orange
+     M:::green
+     N:::orange
+     O:::purple
+     P:::green
+    classDef green fill:#EDF0E9,stroke:#A5B592,stroke-width:2px
+    classDef orange fill:#FCECDA,stroke:#F3A447,stroke-width:2px
+    classDef blue fill:#E5EBF2,stroke:#809EC2,stroke-width:2px
+    classDef yellow fill:#FAF1D4,stroke:#E7BC29,stroke-width:2px
+    classDef pink fill:#F5E9ED,stroke:#D092A7,stroke-width:2px
+    classDef purple fill:#EBE6F2,stroke:#9C85C0,stroke-width:2px

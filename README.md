@@ -4,6 +4,8 @@
 
 **GenMOO** is a multi-objective optimization pipeline for *de novo* molecule generation using a stacked-LSTM model trained on **SELFIES** instead of SMILES. Through the LSTM generator, we have generated novel molecules and evaluated them via three scores: **Docking score** (target selectivity), **SAscore** (synthetic accessibility), and **QED~w~** (drug-likeness). Based on these three scores, we next performed a **non-dominated sorting**, picking out top Pareto fronts and utilizing these excellent molecules to fine-tune the model. After several turns of Pareto optimization, the model will tend to generate molecules with lower docking score, lower SAscore and higher QED~w~ score, and hopefully to expand the Pareto front.
 
+![A LSTM neural network.](assets/LSTM3-chain.png "The repeating module in an LSTM contains four interacting layers.")
+
 [Self-referencing embedded strings](https://github.com/the-matter-lab/selfies) (SELFIES) is a 100% robust molecular string representation. Any sequence of SELFIES symbols can be decoded to a chemically valid molecule, which nearly eliminates invalid outputs. 
 
 The [synthetic accessibility score](https://link.springer.com/article/10.1186/1758-2946-1-8) (SAscore) is a heuristic metric that quantifies the ease of synthesizing a molecule, calculated as a linear combination of fragment contributions and a complexity penalty.
@@ -21,7 +23,7 @@ The pipeline needs an GPU and **CUDA** to run at reasonable speed (in particular
 
 For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger** software on a GPU cluster.
 
-In this project, we use **R 4.5.3** (Reassured Reassurer) with `ggplot2 (4.0.2)` to plot figures. Any R version ≥ 4.1.0 should be fine.
+In this project, we use **R 4.5.3** (Reassured Reassurer) with `ggplot2 (4.0.2)` to plot figures. Any R version ≥ 4.1.0 should be fine. You can easily install `ggplot2` in R console with the following command:
 
 ```r
 install.packages("ggplot2")
@@ -45,20 +47,6 @@ dependencies:
   - numpy=2.2.6
 ```
 
-## Main pipeline
-
-![Pipeline](./assets/model_structure.png "Pipeline")
-
-| Script | Role |
-|--------|------|
-| `step1_PrepareData.py` | Clean + deduplicate SMILES, encode to SELFIES, build the symbol vocabulary (`vocab.npy`) and integer sequences (`intsmiles.npz`) |
-| `step2_Train.py` | Train the stacked-LSTM model from scratch |
-| `step3_GenerateMolecules.py` | Sample SELFIES symbols, decode to SMILES, write `new_molecules.txt` |
-| `step4_CalculateProperties.py` | ... |
-| `step5_NondominatedSorting.py` | ... |
-| `step5_Refine.py` | Fine-tune on the selected molecules, then loop back to step3 |
-
-
 ## Quick start
 
 ```bash
@@ -72,19 +60,54 @@ conda activate genmoo
 python step1_PrepareData.py
 ```
 
-> [!CAUTION]
-> This README file is going to be refined. :angry:
+> [!caution]
+> This chapter is under refinement. :construction_worker:
+
+## Main pipeline
+
+![pipeline](./assets/pipeline.png "Pipeline")
+
+| Script | Role |
+|--------|------|
+| `step1_PrepareData.py` | Clean and deduplicate original library, encode SMILES trings to SELFIES, build the symbol vocabulary and integer sequences |
+| `step2_Train.py` | Train the stacked-LSTM model from scratch |
+| `step3_GenerateMolecules.py` | Samples new molecules from the trained LSTM model |
+| `step4_CalculateProperties.py` | Calculate required properties of molecules, including SAscore and QED~w~ (Docking score is externally generated from Schrödinger) |
+| `step5_NondominatedSorting.py` | Perfrom non-dominated sorting based on three scores, show Pareto fronts and seletct top molecules |
+| `step5_Refine.py` | Fine-tune on the selected molecules, then loop back to step3 |
 
 
 ## Model Structure
 
-- 3 stacked LSTM layers (`hidden_size=1024`, `dropout=0.2`) + a linear head.
-- **Token-level** SELFIES modelling (one-hot input over the symbol vocabulary).
-- Forget-gate bias initialized to `1`; cross-entropy with padded-position masking; Adam (`lr=0.001`) + gradient clipping (`3.0`).
-- Generation: temperature softmax + multinomial sampling, with `<pad>` and `<start>` symbols masked out (`-inf`) so they are never emitted.
+GenMOO's generator is a character-level (in fact token-level) recurrent language model. Its job is: Given the sequence of SELFIES symbols produced so far, predict the distribution over the next symbol.
 
-### Configuration (`config.py`)
+Once trained, sampling from that distribution one symbol at a time yields a full molecule, which can be decoded back into a SMILES string.
 
-- `START_TOKEN = "<start>"`, `END_TOKEN = "<end>"`, `PAD_TOKEN = "<pad>"`.
-- `SEQ_LEN = 100` (SELFIES symbols, incl. start/end).
-- `NUM_MOLECULES = 20`, `TEMPERATURE = 1.0`, etc. — editable as needed.
+![model_structure](assets/model_structure.png "Model structure")
+
+$$
+\begin{array}{ll} \\
+   i_t = \sigma(W_{ii} x_t + b_{ii} + W_{hi} h_{t-1} + b_{hi}) \\
+   f_t = \sigma(W_{if} x_t + b_{if} + W_{hf} h_{t-1} + b_{hf}) \\
+   g_t = \tanh(W_{ig} x_t + b_{ig} + W_{hg} h_{t-1} + b_{hg}) \\
+   o_t = \sigma(W_{io} x_t + b_{io} + W_{ho} h_{t-1} + b_{ho}) \\
+   c_t = f_t \odot c_{t-1} + i_t \odot g_t \\
+   h_t = o_t \odot \tanh(c_t) \\
+\end{array}
+$$
+
+### Configuration
+
+| Parameter | Value | Meaning |
+|-----------|-------|---------|
+| `input_size` / `vocab_size` | 125 | SELFIES symbol vocabulary + 3 special tokens |
+| `hidden_size` | 1024 | LSTM hidden units per layer |
+| `num_layers` | 3 | stacked LSTM layers |
+| `dropout` | 0.2 | dropout between layers |
+| `batch_first` | `True` | the input and output tensors are provided as `(batch, seq, feature)` instead of `(seq, batch, feature)` |
+| `SEQ_LEN` | 100 | max sequence length (incl. `<start>` & `<end>`) |
+| `TEMPERATURE` | 1.0 | . |
+
+## References
+> [!caution]
+> This chapter is under refinement. :construction_worker:
