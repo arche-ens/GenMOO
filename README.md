@@ -4,8 +4,6 @@
 
 **GenMOO** is a multi-objective optimization pipeline for *de novo* molecule generation using a stacked-LSTM model trained on **SELFIES** instead of SMILES. Through the LSTM generator, we have generated novel molecules and evaluated them via three scores: **Docking score** (target selectivity), **SAscore** (synthetic accessibility), and **QED~w~** (drug-likeness). Based on these three scores, we next performed a **non-dominated sorting**, picking out top Pareto fronts and utilizing these excellent molecules to fine-tune the model. After several turns of Pareto optimization, the model will tend to generate molecules with lower docking score, lower SAscore and higher QED~w~ score, and hopefully to expand the Pareto front.
 
-![A LSTM neural network.](assets/LSTM3-chain.png "The repeating module in an LSTM contains four interacting layers.")
-
 [Self-referencing embedded strings](https://github.com/the-matter-lab/selfies) (SELFIES) is a 100% robust molecular string representation. Any sequence of SELFIES symbols can be decoded to a chemically valid molecule, which nearly eliminates invalid outputs. 
 
 The [synthetic accessibility score](https://link.springer.com/article/10.1186/1758-2946-1-8) (SAscore) is a heuristic metric that quantifies the ease of synthesizing a molecule, calculated as a linear combination of fragment contributions and a complexity penalty.
@@ -95,6 +93,8 @@ $$
    h_t = o_t \odot \tanh(c_t) \\
 \end{array}
 $$
+
+![A LSTM neural network.](assets/model_structure_detailed.png "The repeating module in an LSTM contains four interacting layers.")
 
 ### Configuration
 
