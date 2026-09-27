@@ -72,7 +72,7 @@ python step1_PrepareData.py
 | `step3_GenerateMolecules.py` | Samples new molecules from the trained LSTM model |
 | `step4_CalculateProperties.py` | Calculate required properties of molecules, including SAscore and QED~w~ (Docking score is externally generated from Schrödinger) |
 | `step5_NondominatedSorting.py` | Perfrom non-dominated sorting based on three scores, show Pareto fronts and seletct top molecules |
-| `step5_Refine.py` | Fine-tune on the selected molecules, then loop back to step3 |
+| `step6_Refine.py` | Fine-tune on the selected molecules, then loop back to step3 |
 
 
 ## Model Structure
@@ -81,7 +81,7 @@ GenMOO's generator is a character-level (in fact token-level) recurrent language
 
 Once trained, sampling from that distribution one symbol at a time yields a full molecule, which can be decoded back into a SMILES string.
 
-![model_structure](assets/model_structure.png "Model structure")
+![A LSTM neural network.](assets/model_structure_detailed.png "The repeating module in an LSTM contains four interacting layers.")
 
 $$
 \begin{array}{ll} \\
@@ -94,7 +94,7 @@ $$
 \end{array}
 $$
 
-![A LSTM neural network.](assets/model_structure_detailed.png "The repeating module in an LSTM contains four interacting layers.")
+![model_structure](assets/model_structure.png "Model structure")
 
 ### Configuration
 
