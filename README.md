@@ -19,7 +19,7 @@ The [quantitative estimate of drug-likeness](https://www.nature.com/articles/nch
 
 The pipeline needs an GPU and **CUDA** to run at reasonable speed (in particular for training and molecule generating). The present code has been tested on NVIDIA GeForce RTX 4090. For running on other GPUs, some parameter values (e.g. batch size) may need to be changed to adapt to available memory.
 
-For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger** software on a GPU cluster.
+For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger** software on a computing cluster.
 
 In this project, we use **R 4.5.3** (Reassured Reassurer) with `ggplot2 (4.0.2)` to plot figures. Any R version ≥ 4.1.0 should be fine. You can easily install `ggplot2` in R console with the following command:
 
