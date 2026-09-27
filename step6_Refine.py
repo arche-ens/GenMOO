@@ -33,22 +33,22 @@ import config
 import common
 
 
-def loader(mols_file, library):
+def loader(mols_file): # , library):
     with open(mols_file, "r") as fin:
         unique_smiles = [s.strip() for s in fin.readlines()]
     print(f"{len(unique_smiles):,} molecules loaded.")
 
-    with open(library, "r") as fin:
-        lib_smiles = [s.strip() for s in fin.readlines()]
-        rnd_lib_smiles = random.sample(lib_smiles, len(unique_smiles)//2)
+    # with open(library, "r") as fin:
+    #     lib_smiles = [s.strip() for s in fin.readlines()]
+    #     rnd_lib_smiles = random.sample(lib_smiles, len(unique_smiles)//2)
     
     # merged_unique_smiles = [s for pair in zip(unique_smiles, rnd_lib_smiles) for s in pair]
-    merged_unique_smiles = unique_smiles + rnd_lib_smiles
-    random.shuffle(merged_unique_smiles)
-    print(f"{len(merged_unique_smiles):,} molecules in total after merged.")
+    # merged_unique_smiles = unique_smiles + rnd_lib_smiles
+    # random.shuffle(merged_unique_smiles)
+    # print(f"{len(merged_unique_smiles):,} molecules in total after merged.")
 
     unique_selfies = []
-    for s in merged_unique_smiles:
+    for s in unique_smiles:
         try:
             unique_selfies.append(sf.encoder(s))
         except:
@@ -70,7 +70,7 @@ def main(args):
     pad_idx = vocab.index(config.PAD_TOKEN)
     print("Vocabulary size:", V, "| PAD index:", pad_idx)
 
-    selfies = loader(args.mols, args.library)
+    selfies = loader(args.mols) #, args.library)
     int_kept_selfies, kept = common.encode_molecules(selfies, vocab, config.SEQ_LEN)
     print(f"{len(kept):,} molecules are encoded.")
 

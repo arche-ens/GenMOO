@@ -2108,3 +2108,44 @@ Generated 16000/20000 unique molecules
 Generated 18000/20000 unique molecules
 Generated 20000/20000 unique molecules
 Wrote 20000 unique molecules to results/new_molecules1.txt (total attempts: 20009)
+
+Device: cuda
+Vocabulary size: 125 | PAD index: 0
+9,689 molecules loaded.
+14,533 molecules in total after merged.
+14,533 molecules are valid.
+13,935 molecules are encoded.
+Training data: 13935 sequences x 100 steps
+Trainable parameters: 21636221
+Refine batch size: 128 | batches per epoch: 108 | epochs: 5 | LR: 0.0001
+100%|██████████████████████████████████████████| 108/108 [00:03<00:00, 29.13it/s]
+Refine epoch 1/5 | average loss 0.8337
+100%|██████████████████████████████████████████| 108/108 [00:03<00:00, 31.85it/s]
+Refine epoch 2/5 | average loss 0.8171
+100%|██████████████████████████████████████████| 108/108 [00:03<00:00, 31.76it/s]
+Refine epoch 3/5 | average loss 0.8070
+100%|██████████████████████████████████████████| 108/108 [00:03<00:00, 31.74it/s]
+Refine epoch 4/5 | average loss 0.8002
+100%|██████████████████████████████████████████| 108/108 [00:03<00:00, 31.68it/s]
+Refine epoch 5/5 | average loss 0.7940
+Saved refined model to train/network_refined2.pth
+
+Device: cuda
+Vocabulary size: 125 | PAD index: 0
+9,840 molecules loaded.
+9,840 molecules are valid.
+9,797 molecules are encoded.
+Training data: 9797 sequences x 100 steps
+Trainable parameters: 21636221
+Refine batch size: 128 | batches per epoch: 76 | epochs: 5 | LR: 0.0001
+100%|████████████████████████████████████████████| 76/76 [00:02<00:00, 27.92it/s]
+Refine epoch 1/5 | average loss 2.2676
+100%|████████████████████████████████████████████| 76/76 [00:02<00:00, 31.87it/s]
+Refine epoch 2/5 | average loss 1.7433
+100%|████████████████████████████████████████████| 76/76 [00:02<00:00, 31.84it/s]
+Refine epoch 3/5 | average loss 1.5014
+100%|████████████████████████████████████████████| 76/76 [00:02<00:00, 31.74it/s]
+Refine epoch 4/5 | average loss 1.3630
+100%|████████████████████████████████████████████| 76/76 [00:02<00:00, 31.76it/s]
+Refine epoch 5/5 | average loss 1.2807
+Saved refined model to train/network_noMergeRefined.pth
