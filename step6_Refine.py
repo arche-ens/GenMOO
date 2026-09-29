@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""Step 5: Refine (transfer learning) on the filtered molecules.
+"""Step 6: Refine (transfer learning) on the filtered molecules.
 
 Continues training the LSTM on ``new_molecules_filtered.txt`` (the best
 molecules selected by the external scoring script), nudging the generation
