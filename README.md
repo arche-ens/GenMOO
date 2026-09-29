@@ -19,7 +19,7 @@ The [quantitative estimate of drug-likeness](https://www.nature.com/articles/nch
 
 The pipeline needs an GPU and **CUDA** to run at reasonable speed (in particular for training and molecule generating). The present code has been tested on NVIDIA GeForce RTX 4090. For running on other GPUs, some parameter values (e.g. batch size) may need to be changed to adapt to available memory.
 
-For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger** software on a computing cluster.
+For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger** software on a computing cluster. MD for the target protein is required.
 
 In this project, we use **R 4.5.3** (Reassured Reassurer) with `ggplot2 (4.0.2)` to plot figures. Any R version ≥ 4.1.0 should be fine. You can easily install `ggplot2` in R console with the following command:
 
@@ -61,6 +61,37 @@ python step1_PrepareData.py
 > [!caution]
 > This chapter is under refinement. :construction_worker:
 
+<details> <summary> Example </summary>
+
+Once the initial model is trained, `2ScoreTest.sh` provides a toy example using two of the three scores (SAscore and QED~w~). 
+```bash
+bash 2ScoreTest.sh
+```
+
+> [!TIP]
+> Aimed to quickly verify the pipeline, this example doesn't require Schrödinger software.
+
+Following the in-line instruction, the script will finally generate:
+
+```
+2ScoreExample/
+|-results/
+| |-2SE_molecules1.txt
+| |-2SE_molecules1.csv
+| |-2SE_molecules1_properties.csv
+| |-2SE_molecules1_properties_pareto_results/
+| | |-all_solutions.csv
+| | |-pareto_front_001.csv
+| | |-...
+| | |-top_10000_smiles.txt
+
+|-train/
+| |-2SE_network_refined1.pth
+| |-...
+```
+
+</details>
+
 ## Main pipeline
 
 ![pipeline](./assets/pipeline.png "Pipeline")
@@ -100,13 +131,13 @@ $$
 
 | Parameter | Value | Meaning |
 |-----------|-------|---------|
-| `input_size` / `vocab_size` | 125 | SELFIES symbol vocabulary + 3 special tokens |
+| `vocab_size` | 125 | SELFIES symbol vocabulary + 3 special tokens |
 | `hidden_size` | 1024 | LSTM hidden units per layer |
 | `num_layers` | 3 | stacked LSTM layers |
 | `dropout` | 0.2 | dropout between layers |
 | `batch_first` | `True` | the input and output tensors are provided as `(batch, seq, feature)` instead of `(seq, batch, feature)` |
 | `SEQ_LEN` | 100 | max sequence length (incl. `<start>` & `<end>`) |
-| `TEMPERATURE` | 1.0 | . |
+| `TEMPERATURE` | 0.7 | . |
 
 ## References
 > [!caution]
