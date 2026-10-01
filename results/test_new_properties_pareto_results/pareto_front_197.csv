@@ -1,2 +1,0 @@
-ID,Smiles,HBD,LogP,MW,HBA,RB,AromaticRings,TPSA,MR,SAscore,Alerts,Lipinski_Violations,Lipinski_Ro5,Veber,Ghose_Filter,My_Rule,My_QED,pareto_rank
-GenMOO-06061,C1OC(=O)C=C1[C@@H1](CC2)[C@@](C)([C@]23O)CC[C@@H1]4[C@@]5(C=O)[C@@](O)(CC[C@@H1]34)C[C@@H1](CC5)O[C@H1]6[C@@H1](O)[C@H1](O)[C@H1]([C@H1](O6)C)O[C@@H1]7[C@@H1](O)[C@H1](O)[C@@H1](O)[C@@H1](O7)CO,8,-1.426,712.786,15,7,0,242.13,167.43,5.781,3,3,False,False,False,0.088,0.103,197

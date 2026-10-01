@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""Step 5: Refine (transfer learning) on the filtered molecules.
+"""Step 6: Refine (transfer learning) on the filtered molecules.
 
-Continues training the LSTM on ``new_molecules_filtered.txt`` (the best
+Continue training the LSTM on ``new_molecules_filtered.txt`` (the best
 molecules selected by the external scoring script), nudging the generation
 distribution toward higher-scoring regions of chemical space.
 
-The refined weights are written back to ``network.pth`` so that the next
-generate -> score -> refine round continues from the improved model. A copy is
-also saved to ``network_refined.pth``.
+The refined weights are restored to ``network_refined.pth`` so that the next
+generate -> score -> refine round continues from the improved model.
 
 Inputs
 ------
@@ -28,14 +27,24 @@ import selfies as sf
 import argparse
 from pathlib import Path
 from tqdm import tqdm
+import random
 import config
 import common
 
 
-def loader(mols_file):
+def loader(mols_file): # , library):
     with open(mols_file, "r") as fin:
         unique_smiles = [s.strip() for s in fin.readlines()]
     print(f"{len(unique_smiles):,} molecules loaded.")
+
+    # with open(library, "r") as fin:
+    #     lib_smiles = [s.strip() for s in fin.readlines()]
+    #     rnd_lib_smiles = random.sample(lib_smiles, len(unique_smiles)//2)
+    
+    # merged_unique_smiles = [s for pair in zip(unique_smiles, rnd_lib_smiles) for s in pair]
+    # merged_unique_smiles = unique_smiles + rnd_lib_smiles
+    # random.shuffle(merged_unique_smiles)
+    # print(f"{len(merged_unique_smiles):,} molecules in total after merged.")
 
     unique_selfies = []
     for s in unique_smiles:
@@ -43,7 +52,7 @@ def loader(mols_file):
             unique_selfies.append(sf.encoder(s))
         except:
             print("[WARNING] Cannot convert to SELFIES:", s)
-    print(f"{len(unique_smiles):,} molecules are valid.")
+    print(f"{len(unique_selfies):,} molecules are valid.")
     return unique_selfies
 
 
@@ -60,7 +69,7 @@ def main(args):
     pad_idx = vocab.index(config.PAD_TOKEN)
     print("Vocabulary size:", V, "| PAD index:", pad_idx)
 
-    selfies = loader(args.mols)
+    selfies = loader(args.mols) #, args.library)
     int_kept_selfies, kept = common.encode_molecules(selfies, vocab, config.SEQ_LEN)
     print(f"{len(kept):,} molecules are encoded.")
 
@@ -79,7 +88,7 @@ def main(args):
 
     bsize = min(config.BATCH_SIZE, N)
     n_batches = N // bsize
-    print(f"Refine batch size: {bsize} | batches per epoch: {n_batches} | epochs: {config.REFINE_EPOCHS}")
+    print(f"Refine batch size: {bsize} | batches per epoch: {n_batches} | epochs: {config.REFINE_EPOCHS} | LR: {config.REFINE_LR}")
 
     for epoch in range(1, config.REFINE_EPOCHS + 1):
         perm = torch.randperm(N)
@@ -120,6 +129,8 @@ if __name__ == "__main__":
                         help=f"Path to refined model file (pth). Default: {config.REFINED_MODEL_FILE}")
     parser.add_argument("--mols", default=config.FILTERED_FILE, type=Path, 
                         help=f"Filtered molecules file (txt). Default: {config.FILTERED_FILE}")
+    # parser.add_argument("--library", default=config.LIBRARY_FILE, type=Path,
+    #                     help=f"Path to original library that randomly mixed with filtered data. Default: {config.KEPT_SMILES}")
     args = parser.parse_args()
 
     main(args)

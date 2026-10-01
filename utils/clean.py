@@ -1,16 +1,15 @@
-import pandas as pd
 from pathlib import Path
 from rdkit import Chem
-from rdkit.Chem import Descriptors, AllChem, MolStandardize
+from rdkit.Chem import MolStandardize
 cleaner = MolStandardize.rdMolStandardize.MetalDisconnector()
 fragment_chooser = MolStandardize.rdMolStandardize.LargestFragmentChooser()
 normalizer = MolStandardize.rdMolStandardize.Normalizer()
 
 
 def clean_molecule(mol):
-    mol = cleaner.Disconnect(mol) # Disconnect metals
+    mol = cleaner.Disconnect(mol)      # Disconnect metals
     mol = fragment_chooser.choose(mol) # Desalt
-    mol = normalizer.normalize(mol)     # Standardize nitro, charge representation
+    mol = normalizer.normalize(mol)    # Standardize nitro, charge representation
     return mol
 
 
@@ -75,7 +74,7 @@ def clean_data(input_data):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", default="test_data.txt")
+    parser.add_argument("input")
     args = parser.parse_args()
 
     input_data = Path(args.input)

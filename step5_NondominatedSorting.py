@@ -64,7 +64,7 @@ def non_dominated_sort(df: pd.DataFrame, objectives: dict):
 
 def main():
     parser = argparse.ArgumentParser(description="Pareto non-dominated sorting")
-    parser.add_argument("input", type=Path, help="Input CSV file")
+    parser.add_argument("input", type=Path, help="Input CSV file. (name_properties.csv)")
     parser.add_argument("-p", "--properties", nargs="+", required=True, help="Column name of properties that participate in NDS.")
     parser.add_argument("-o", "--objectives", nargs="+", choices=["min", "max"], required=True, help="Optimization direction for each objective column")
     parser.add_argument("--top", nargs="+", type=int, default=None, help="Select the top-N molecules by Pareto rank (add whole fronts until exceeding N). Multiple values allowed, e.g. --top 50 5000. If omitted, keep all.")

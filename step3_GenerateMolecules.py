@@ -23,6 +23,7 @@ import torch.nn.functional as F
 from pathlib import Path
 import config
 import common
+from utils.calc_novelty import calc_novelty
 
 
 def set_seed():
@@ -83,7 +84,7 @@ def main(args):
     attempts = 0
     max_attempts = args.num * 10
 
-    with open(args.output, "w") as f, open(args.output.with_suffix(".csv"), "w") as f2:
+    with open(args.output.with_suffix(".txt"), "w") as f, open(args.output.with_suffix(".csv"), "w") as f2:
         f2.write("ID,Smiles\n")
         while count < args.num and attempts < max_attempts:
             attempts += 1
@@ -97,6 +98,12 @@ def main(args):
                     print(f"Generated {count}/{args.num} unique molecules")
 
     print(f"Wrote {count} unique molecules to {args.output} (total attempts: {attempts})")
+
+    try:
+        novelty = calc_novelty(args.output, config.KEPT_SMILES)
+        print(f"{novelty*100:.2f}% of generated molecules are novel.")
+    except:
+        print("[WARNING] Cannot calculate novelty")
 
 
 if __name__ == "__main__":

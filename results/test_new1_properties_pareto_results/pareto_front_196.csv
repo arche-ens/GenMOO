@@ -1,4 +1,0 @@
-ID,Smiles,HBD,LogP,MW,HBA,RB,AromaticRings,TPSA,MR,SAscore,Alerts,Lipinski_Violations,Lipinski_Ro5,Veber,Ghose_Filter,My_Rule,My_QED,pareto_rank
-GenMOO-01320,ClC1=CC=CC(F)=C1CN2[C@@H1](C3=CC(Br)=CC=C3)[N@H1+1](CC2)CC4=C(C)C=CC=C4,1,5.15,474.825,1,5,3,7.68,119.416,3.881,0,1,True,True,True,0.875,0.355,196
-GenMOO-01916,C1=CC=C(I)C=C1[C@H1]2[NH1+1]=C(C3=CC=C(C=C3)CC)C[C@@H1](N2)C4=C(O)C(OCC)=CC=C4,3,4.261,527.426,3,6,3,55.46,132.561,3.932,1,1,True,True,False,0.775,0.412,196
-GenMOO-03748,C1=CC(F)=CC=C1N(C2=O)C(=O)[C@@H1]([C@@H1]23)[C@@H1](C4=C(OC)C(OC)=C(C=C4)OC)N[C@]3(C(=O)[O-1])CC5=CC=CC=C5,1,2.033,533.532,8,8,3,117.23,135.732,3.87,1,1,True,True,False,0.875,0.346,196

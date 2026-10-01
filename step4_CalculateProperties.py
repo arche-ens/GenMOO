@@ -38,7 +38,7 @@ def calc_properties(mol: Chem.rdchem.Mol):
 def add_properties(df: pd.DataFrame, smiles_column="Smiles"):
     """Calculate descriptors for each row and return an augmented DataFrame."""
     property_columns = ["HBD", "LogP", "MW", "HBA", "RB", "AromaticRings", "TPSA", "MR", "SAscore", "Alerts"]
-    rule_columns = ["Lipinski_Violations", "Lipinski_Ro5", "Veber", "Ghose_Filter", "My_Rule", "My_QED"]
+    rule_columns = ["Lipinski_Violations", "Lipinski_Ro5", "Veber", "Ghose_Filter", "QED_w"]
     records = []
 
     for smiles in df[smiles_column]:
@@ -92,7 +92,8 @@ def check_rules(props: dict[str]):
     )
 
     # My Rule
-    results["My_Rule"] = (calc_MyRuleScore(props))
+    # results["My_Rule"] = (calc_MyRuleScore(props))
+    
     # Weighted QED
     # qed_weights = [0.66, 0.46, 0.05, 0.61, 0.06, 0.65, 0.48, 0.95]
     qed_weights = [0.1417, 0.1108, 0.0709, 0.0639, 0.1604, 0.0757, 0.3288, 0.0479]
