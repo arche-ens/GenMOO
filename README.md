@@ -61,21 +61,21 @@ python step1_PrepareData.py
 python step2_Train.py
 ```
 
-<details close>
+> [!TIP]
+> Once the initial model is trained, `2ScoreTest.sh` provides a toy example using two of the three scores (SAscore and QED~w~). 
+
+<details open>
 
 <summary> 
 
-*Toy example* 
+#### *Toy example* 
 
 </summary>
 
-Once the initial model is trained, `2ScoreTest.sh` provides a toy example using two of the three scores (SAscore and QED~w~). 
+
 ```bash
 bash 2ScoreTest.sh
 ```
-
-> [!TIP]
-> Aimed to quickly verify the pipeline, this example doesn't require Schrödinger software.
 
 Following the in-line instruction, the script will finally generate:
 
@@ -120,7 +120,7 @@ python step4_CalculateProperties.py results/new_molecules5_active.csv
 python step5_NondominatedSorting.py results/new_molecules5_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
 cp results/new_molecules5_active_properties_pareto_results/pareto_front_001.csv results/final_candidates.csv
 ```
-> [!caution]
+> [!important]
 > This chapter is under refinement. :construction_worker:
 > `results.xlsx` requires:
 > - ID: `GenMOO_Mol001`
