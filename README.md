@@ -50,18 +50,24 @@ dependencies:
 ```bash
 git clone https://github.com/arche-ens/GenMOO.git GenMOO
 cd GenMOO
+conda update -n base -c defaults conda
 conda env create -f environment.yml
 conda activate genmoo
+gunzip data/ChemDiv.txt.gz
 ```
 
 ```bash
 python step1_PrepareData.py
+python step2_Train.py
 ```
 
-> [!caution]
-> This chapter is under refinement. :construction_worker:
+<details close>
 
-<details> <summary> Example </summary>
+<summary> 
+
+*Toy example* 
+
+</summary>
 
 Once the initial model is trained, `2ScoreTest.sh` provides a toy example using two of the three scores (SAscore and QED~w~). 
 ```bash
@@ -89,8 +95,38 @@ Following the in-line instruction, the script will finally generate:
 | |-2SE_network_refined1.pth
 | |-...
 ```
+---
 
 </details>
+
+```bash
+python step3_GenerateMolecules.py --num 20000
+```
+- This step generates `results/new_molecules.csv` file. It is supposed to perform molecule-protein docking in Schrödinger first
+- Docking --> `new_molecules_active.csv`
+```bash
+python step4_CalculateProperties.py results/new_molecules_active.csv
+python step5_NondominatedSorting.py results/new_molecules_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
+python step6_Refine.py --model train/network.pth --output train/network_refined1.pth --mols results/new_molecules_active_properties_pareto_results/top_10000_smiles.txt
+```
+- The refined model is saved to `train/network_refined1.pth`, and can be used in step 3.
+```bash
+python step3_GenerateMolecules.py --model train/network_refined1.pth --output results/new_molecules1.txt --num 20000
+```
+- After several (five) turns of fine-tunning, use the refined model to generate new molecules. Take the first Pareto front as result.
+```bash
+python step3_GenerateMolecules.py --model train/network_refined5.pth --output results/new_molecules5.txt --num 20000
+python step4_CalculateProperties.py results/new_molecules5_active.csv
+python step5_NondominatedSorting.py results/new_molecules5_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
+cp results/new_molecules5_active_properties_pareto_results/pareto_front_001.csv results/final_candidates.csv
+```
+> [!caution]
+> This chapter is under refinement. :construction_worker:
+> `results.xlsx` requires:
+> - ID: `GenMOO_Mol001`
+> - Target: `Mas1`
+> - Main effect: agonist with high affinity, synthetic accessibility, and drug-likeness
+> - SMILES
 
 ## Main pipeline
 
@@ -108,7 +144,7 @@ Following the in-line instruction, the script will finally generate:
 
 ## Model Structure
 
-GenMOO's generator is a character-level (in fact token-level) recurrent language model. Its job is: Given the sequence of SELFIES symbols produced so far, predict the distribution over the next symbol.
+GenMOO's molecule generator is a character-level (in fact token-level) recurrent language model. Its job is: Given the sequence of SELFIES symbols produced so far, predict the distribution over the next symbol.
 
 Once trained, sampling from that distribution one symbol at a time yields a full molecule, which can be decoded back into a SMILES string.
 
@@ -137,7 +173,7 @@ $$
 | `dropout` | 0.2 | dropout between layers |
 | `batch_first` | `True` | the input and output tensors are provided as `(batch, seq, feature)` instead of `(seq, batch, feature)` |
 | `SEQ_LEN` | 100 | max sequence length (incl. `<start>` & `<end>`) |
-| `TEMPERATURE` | 0.7 | . |
+| `TEMPERATURE` | 0.7 | Initialization of the forget gate, pushing the model to remember old knowledges whilst learning from new informations |
 
 ## References
 > [!caution]
