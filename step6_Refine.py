@@ -2,13 +2,12 @@
 # coding: utf-8
 """Step 6: Refine (transfer learning) on the filtered molecules.
 
-Continues training the LSTM on ``new_molecules_filtered.txt`` (the best
+Continue training the LSTM on ``new_molecules_filtered.txt`` (the best
 molecules selected by the external scoring script), nudging the generation
 distribution toward higher-scoring regions of chemical space.
 
-The refined weights are written back to ``network.pth`` so that the next
-generate -> score -> refine round continues from the improved model. A copy is
-also saved to ``network_refined.pth``.
+The refined weights are restored to ``network_refined.pth`` so that the next
+generate -> score -> refine round continues from the improved model.
 
 Inputs
 ------
@@ -130,8 +129,8 @@ if __name__ == "__main__":
                         help=f"Path to refined model file (pth). Default: {config.REFINED_MODEL_FILE}")
     parser.add_argument("--mols", default=config.FILTERED_FILE, type=Path, 
                         help=f"Filtered molecules file (txt). Default: {config.FILTERED_FILE}")
-    parser.add_argument("--library", default=config.LIBRARY_FILE, type=Path,
-                        help=f"Path to original library that randomly mixed with filtered data. Default: {config.KEPT_SMILES}")
+    # parser.add_argument("--library", default=config.LIBRARY_FILE, type=Path,
+    #                     help=f"Path to original library that randomly mixed with filtered data. Default: {config.KEPT_SMILES}")
     args = parser.parse_args()
 
     main(args)
