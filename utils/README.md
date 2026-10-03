@@ -62,7 +62,7 @@ ID,Smiles,score_1,score_2,score_3,avg,best,n_valid
 ...
 ```
 
-<details open><summary> only one state? </summary>
+<details close> <summary> only one state? </summary>
 
 ```
 docking_result

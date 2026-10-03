@@ -19,7 +19,7 @@ The [quantitative estimate of drug-likeness](https://www.nature.com/articles/nch
 
 The pipeline needs an GPU and **CUDA** to run at reasonable speed (in particular for training and molecule generating). The present code has been tested on NVIDIA GeForce RTX 4090. For running on other GPUs, some parameter values (e.g. batch size) may need to be changed to adapt to available memory.
 
-For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger** software on a computing cluster. MD for the target protein is required.
+For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger Suite** (2024-1, Build 135) on a computing cluster. Run Schrödinger jobs on a PC is also available, but the runtime depends on your CPU kernal numbers. MD for the target protein is required.
 
 In this project, we use **R 4.5.3** (Reassured Reassurer) with `ggplot2 (4.0.2)` to plot figures. Any R version ≥ 4.1.0 should be fine. You can easily install `ggplot2` in R console with the following command:
 
@@ -64,7 +64,7 @@ python step2_Train.py
 > [!TIP]
 > Once the initial model is trained, `2ScoreTest.sh` provides a toy example using two of the three scores (SAscore and QED~w~). 
 
-<details open>
+<details close>
 
 <summary> 
 
@@ -74,7 +74,7 @@ python step2_Train.py
 
 
 ```bash
-bash 2ScoreTest.sh
+bash utils/2ScoreTest.sh
 ```
 
 Following the in-line instruction, the script will finally generate:
@@ -120,13 +120,6 @@ python step4_CalculateProperties.py results/new_molecules5_active.csv
 python step5_NondominatedSorting.py results/new_molecules5_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
 cp results/new_molecules5_active_properties_pareto_results/pareto_front_001.csv results/final_candidates.csv
 ```
-> [!important]
-> This chapter is under refinement. :construction_worker:
-> `results.xlsx` requires:
-> - ID: `GenMOO_Mol001`
-> - Target: `Mas1`
-> - Main effect: agonist with high affinity, synthetic accessibility, and drug-likeness
-> - SMILES
 
 ## Main pipeline
 
@@ -171,10 +164,9 @@ $$
 | `hidden_size` | 1024 | LSTM hidden units per layer |
 | `num_layers` | 3 | stacked LSTM layers |
 | `dropout` | 0.2 | dropout between layers |
-| `batch_first` | `True` | the input and output tensors are provided as `(batch, seq, feature)` instead of `(seq, batch, feature)` |
 | `SEQ_LEN` | 100 | max sequence length (incl. `<start>` & `<end>`) |
 | `TEMPERATURE` | 0.7 | Initialization of the forget gate, pushing the model to remember old knowledges whilst learning from new informations |
 
 ## References
-> [!caution]
+> [!WARNING]
 > This chapter is under refinement. :construction_worker:
