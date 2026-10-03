@@ -88,7 +88,7 @@ CLASSES = {
 
 ### `plot_distributions.R`
 
-> By default, draw the boxplot for distributions of three scores.
+> By default, draw the boxplot and violin for distributions of three scores.
 
 Script arguments:
 
@@ -103,3 +103,12 @@ files <- list(
 )
 ```
 
+Run 
+```
+Rscript plot_distributions.R
+```
+will generate
+```
+plot/dist_QED_w_box.png     plot/dist_SAscore_box.png     plot/dist_avg_box.png
+plot/dist_QED_w_violin.png  plot/dist_SAscore_violin.png  plot/dist_avg_violin.png
+```

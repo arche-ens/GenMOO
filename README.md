@@ -1,34 +1,21 @@
-# GenMOO :partying_face::tada: 
+## 依赖
+### 系统要求
 
-## Introduction
+**GenMOO** 使用 **Python 3** 实现，基于 **PyTorch** 框架开发。已在 Linux（Ubuntu 20.04.6 LTS）上通过测试，预计也可在 Windows 和 macOS 上运行。
 
-**GenMOO** is a multi-objective optimization pipeline for *de novo* molecule generation using a stacked-LSTM model trained on **SELFIES** instead of SMILES. Through the LSTM generator, we have generated novel molecules and evaluated them via three scores: **Docking score** (target selectivity), **SAscore** (synthetic accessibility), and **QED~w~** (drug-likeness). Based on these three scores, we next performed a **non-dominated sorting**, picking out top Pareto fronts and utilizing these excellent molecules to fine-tune the model. After several turns of Pareto optimization, the model will tend to generate molecules with lower docking score, lower SAscore and higher QED~w~ score, and hopefully to expand the Pareto front.
+该流程需要 GPU 和 **CUDA** 支持才能以合理的速度运行，尤其是在模型训练和分子生成阶段。当前代码已在 NVIDIA GeForce RTX 4090 上通过测试。如需在其他 GPU 上运行，可能需要根据可用显存调整部分参数（例如批次大小）。
 
-[Self-referencing embedded strings](https://github.com/the-matter-lab/selfies) (SELFIES) is a 100% robust molecular string representation. Any sequence of SELFIES symbols can be decoded to a chemically valid molecule, which nearly eliminates invalid outputs. 
+在分子对接阶段，我们使用 [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) 脚本，在计算集群上调用 **Schrödinger Suite**（2024-1，Build 135）。也可以在个人电脑上运行 Schrödinger 任务，但运行时间取决于 CPU 核数。此外，还需要预先对靶蛋白进行分子动力学（MD）模拟。
 
-The [synthetic accessibility score](https://link.springer.com/article/10.1186/1758-2946-1-8) (SAscore) is a heuristic metric that quantifies the ease of synthesizing a molecule, calculated as a linear combination of fragment contributions and a complexity penalty.
-
-The [quantitative estimate of drug-likeness](https://www.nature.com/articles/nchem.1243) (QED) is a measure to evaluate drug-likeness for a molecule, which reflects the underlying distribution of molecular properties.
-
-[pymoo](https://pymoo.org/) offers state of the art single- and multi-objective optimization algorithms and many more features related to multi-objective optimization.
-
-## Requirements
-### System requirements
-
-**GenMOO** has been implemented using **Python 3** and is based on the **PyTorch** package. It has been tested on Linux (Ubuntu 20.04.6 LTS), and should also work on Windows as well as Mac OSX.
-
-The pipeline needs an GPU and **CUDA** to run at reasonable speed (in particular for training and molecule generating). The present code has been tested on NVIDIA GeForce RTX 4090. For running on other GPUs, some parameter values (e.g. batch size) may need to be changed to adapt to available memory.
-
-For docking, we have run the [GVSrun](https://github.com/Wang-Lin-boop/CADD-Scripts) script to utilize **Schrödinger Suite** (2024-1, Build 135) on a computing cluster. Run Schrödinger jobs on a PC is also available, but the runtime depends on your CPU kernal numbers. MD for the target protein is required.
-
-In this project, we use **R 4.5.3** (Reassured Reassurer) with `ggplot2 (4.0.2)` to plot figures. Any R version ≥ 4.1.0 should be fine. You can easily install `ggplot2` in R console with the following command:
+本项目使用 **R 4.5.3**（Reassured Reassurer）和 `ggplot2 (4.0.2)` 绘制图表。R 4.1.0 及以上版本均应适用。您可以在 R 控制台中运行以下命令以轻松安装 `ggplot2`：
 
 ```r
 install.packages("ggplot2")
 ```
 
-### Package dependencies
-GenMOO depends on following packages. The package versions for which we have tested are also provided:
+### 包依赖
+
+GenMOO 依赖于以下 python 包。我们还提供了测试过的包版本：
 ```yml
 dependencies:
   - python=3.10
@@ -45,128 +32,62 @@ dependencies:
   - numpy=2.2.6
 ```
 
-## Quick start
+## 主运行入口
 
 ```bash
-git clone https://github.com/arche-ens/GenMOO.git GenMOO
-cd GenMOO
 conda update -n base -c defaults conda
 conda env create -f environment.yml
 conda activate genmoo
 gunzip data/ChemDiv.txt.gz
 ```
 
-```bash
-python step1_PrepareData.py
-python step2_Train.py
+进入根目录后，运行以下命令以训练：
 ```
-
-> [!TIP]
-> Once the initial model is trained, `2ScoreTest.sh` provides a toy example using two of the three scores (SAscore and QED~w~). 
-
-<details close>
-
-<summary> 
-
-#### *Toy example* 
-
-</summary>
-
-
-```bash
-bash utils/2ScoreTest.sh
+bash main.sh
 ```
-
-Following the in-line instruction, the script will finally generate:
-
+或直接运行以下命令获取最终候选分子：
 ```
-2ScoreExample/
-|-results/
-| |-2SE_molecules1.txt
-| |-2SE_molecules1.csv
-| |-2SE_molecules1_properties.csv
-| |-2SE_molecules1_properties_pareto_results/
-| | |-all_solutions.csv
-| | |-pareto_front_001.csv
-| | |-...
-| | |-top_10000_smiles.txt
-
-|-train/
-| |-2SE_network_refined1.pth
-| |-...
+bash predict.sh
 ```
----
+以上运行过程默认使用我们通过 Schrodinger 软件得到的分子对接结果，若您想要复现配体准备与分子对接过程，可以使用分子动力学模拟后 glide_grid 构建的 zip 文件（`data/glide-grid_active_state_*.zip`），结合生成的分子（`results/new_molecules*.csv`）进行分子对接。
 
-</details>
+## 数据集
 
-```bash
-python step3_GenerateMolecules.py --num 20000
-```
-- This step generates `results/new_molecules.csv` file. It is supposed to perform molecule-protein docking in Schrödinger first
-- Docking --> `new_molecules_active.csv`
-```bash
-python step4_CalculateProperties.py results/new_molecules_active.csv
-python step5_NondominatedSorting.py results/new_molecules_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
-python step6_Refine.py --model train/network.pth --output train/network_refined1.pth --mols results/new_molecules_active_properties_pareto_results/top_10000_smiles.txt
-```
-- The refined model is saved to `train/network_refined1.pth`, and can be used in step 3.
-```bash
-python step3_GenerateMolecules.py --model train/network_refined1.pth --output results/new_molecules1.txt --num 20000
-```
-- After several (five) turns of fine-tunning, use the refined model to generate new molecules. Take the first Pareto front as result.
-```bash
-python step3_GenerateMolecules.py --model train/network_refined5.pth --output results/new_molecules5.txt --num 20000
-python step4_CalculateProperties.py results/new_molecules5_active.csv
-python step5_NondominatedSorting.py results/new_molecules5_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
-cp results/new_molecules5_active_properties_pareto_results/pareto_front_001.csv results/final_candidates.csv
-```
+训练初始模型使用的 ChemDiv 数据集由供货商提供，没有使用限制条件。您可以访问 [`data/ChemDiv.txt`](data/ChemDiv.txt) 来获取它。
 
-## Main pipeline
+## 模型
 
-![pipeline](./assets/pipeline.png "Pipeline")
+### 模型结构
 
-| Script | Role |
-|--------|------|
-| `step1_PrepareData.py` | Clean and deduplicate original library, encode SMILES trings to SELFIES, build the symbol vocabulary and integer sequences |
-| `step2_Train.py` | Train the stacked-LSTM model from scratch |
-| `step3_GenerateMolecules.py` | Samples new molecules from the trained LSTM model |
-| `step4_CalculateProperties.py` | Calculate required properties of molecules, including SAscore and QED~w~ (Docking score is externally generated from Schrödinger) |
-| `step5_NondominatedSorting.py` | Perfrom non-dominated sorting based on three scores, show Pareto fronts and seletct top molecules |
-| `step6_Refine.py` | Fine-tune on the selected molecules, then loop back to step3 |
-
-
-## Model Structure
-
-GenMOO's molecule generator is a character-level (in fact token-level) recurrent language model. Its job is: Given the sequence of SELFIES symbols produced so far, predict the distribution over the next symbol.
-
-Once trained, sampling from that distribution one symbol at a time yields a full molecule, which can be decoded back into a SMILES string.
+LSTM 网络是一种循环神经网络，由连续的细胞组成，每个细胞都有三个称为“门”的神经网络层。遗忘门、更新门和输出门决定在附加单元状态中保留哪些信息。单元状态通过整个网络。这样，LSTM 的隐藏状态充当短期记忆，而细胞状态充当长期记忆。我们将 SMILES 分子数据集转化为 SELFIES 表示，使用 one-hot 编码训练了一个 LSTM 网络，以生成新的有效分子。
 
 ![A LSTM neural network.](assets/model_structure_detailed.png "The repeating module in an LSTM contains four interacting layers.")
 
-$$
-\begin{array}{ll} \\
-   i_t = \sigma(W_{ii} x_t + b_{ii} + W_{hi} h_{t-1} + b_{hi}) \\
-   f_t = \sigma(W_{if} x_t + b_{if} + W_{hf} h_{t-1} + b_{hf}) \\
-   g_t = \tanh(W_{ig} x_t + b_{ig} + W_{hg} h_{t-1} + b_{hg}) \\
-   o_t = \sigma(W_{io} x_t + b_{io} + W_{ho} h_{t-1} + b_{ho}) \\
-   c_t = f_t \odot c_{t-1} + i_t \odot g_t \\
-   h_t = o_t \odot \tanh(c_t) \\
-\end{array}
-$$
+![3-layer stacked LSTM](assets/model_structure.png "Model structure")
 
-![model_structure](assets/model_structure.png "Model structure")
+### 关键参数
 
-### Configuration
-
-| Parameter | Value | Meaning |
+| 参数 | 值 | 意义 |
 |-----------|-------|---------|
-| `vocab_size` | 125 | SELFIES symbol vocabulary + 3 special tokens |
-| `hidden_size` | 1024 | LSTM hidden units per layer |
-| `num_layers` | 3 | stacked LSTM layers |
-| `dropout` | 0.2 | dropout between layers |
-| `SEQ_LEN` | 100 | max sequence length (incl. `<start>` & `<end>`) |
-| `TEMPERATURE` | 0.7 | Initialization of the forget gate, pushing the model to remember old knowledges whilst learning from new informations |
+| `vocab_size` | 125 | SELFIES 符号词表（包括 3 个特殊符号） |
+| `hidden_size` | 1024 | 每一层的 LSTM 隐藏单元 |
+| `num_layers` | 3 | 堆叠 LSTM 网络的层数 |
+| `dropout` | 0.2 | 不同 LSTM 层之间的信息丢失率 |
+| `SEQ_LEN` | 100 | 最大的符号序列长度（包括特殊符号） |
+| `TEMPERATURE` | 0.7 | 遗忘门的初始化参数，推动模型在学习新信息的同时记住旧的知识 |
 
-## References
-> [!WARNING]
-> This chapter is under refinement. :construction_worker:
+### 训练与验证日志
+
+您可以访问 [`log.md`](log.md) 获取所有训练与生成日志。
+
+### 随机种子设置
+
+生成新分子时，`torch` 在所有设备上生成随机数的种子设置为 `23333`，即
+```python
+torch.manual_seed(23333)
+```
+
+### 输入输出
+
+输入：用 SMILES 表示的 txt 文件，MD 后 glide_grid 构建的 zip 文件
+输出：包含模型权重的 pth 文件，包含最终候选分子的 csv 文件，和小分子-靶点复合物结构预测的 maegz 文件。
