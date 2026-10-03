@@ -54,7 +54,6 @@ def main():
         except:
             print("[WARNING] Cannot convert to SELFIES:", s)
     print(f"{len(unique_smiles):,} molecules are valid.")
-    breakpoint()
 
     max_len = config.SEQ_LEN - 2  # reserve room for START + END tokens
     kept_selfies = [s for s in unique_selfies if (0 < len(list(sf.split_selfies(s))) <= max_len)]

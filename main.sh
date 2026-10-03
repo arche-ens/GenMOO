@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-export CUDA_VISIBLE_DEVICES=1,3
+export CUDA_VISIBLE_DEVICES=1,2
 echo CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES}
 
 for path in "results/" "train/"; do {
@@ -51,8 +51,8 @@ elif [[ "$TAG" == "no" ]]; then
 fi
 
 
-while [[ $CODENAME <= 5 ]]; do {
-    NEXT=${NEXT:-$((CODENAME + 1))}
+while [[ $CODENAME -lt 5 ]]; do {
+    NEXT=$((CODENAME + 1))
     
     echo;echo generating molecules... 
     python step3_GenerateMolecules.py --model train/network_refined${CODENAME}.pth --output results/new_molecules${CODENAME}.txt --num 20000
@@ -70,4 +70,16 @@ while [[ $CODENAME <= 5 ]]; do {
 
 } done
 
+echo;echo generating molecules... 
+python step3_GenerateMolecules.py --model train/network_refined${CODENAME}.pth --output results/new_molecules${CODENAME}.txt --num 20000
+
+echo;echo calculate properties...
+python step4_CalculateProperties.py results/new_molecules${CODENAME}_active.csv
+
+echo;echo non-dominated sorting...
+python step5_NondominatedSorting.py results/new_molecules${CODENAME}_active_properties.csv -p avg SAscore QED_w -o min min max --top 10000
+
+cp results/new_molecules5_active_properties_pareto_results/pareto_front_001.csv results/final_candidates.csv
+
 echo done!!
+echo find candidates at: results/final_candidates.csv

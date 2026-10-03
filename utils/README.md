@@ -85,3 +85,21 @@ CLASSES = {
 ```
 
 </details>
+
+### `plot_distributions.R`
+
+> By default, draw the boxplot for distributions of three scores.
+
+Script arguments:
+
+```r
+files <- list(
+  Gen_0 = "results/new_molecules_active_properties.csv",
+  Gen_1 = "results/new_molecules1_active_properties.csv",
+  Gen_2 = "results/new_molecules2_active_properties.csv",
+  Gen_3 = "results/new_molecules3_active_properties.csv",
+  Gen_4 = "results/new_molecules4_active_properties.csv",
+  Gen_5 = "results/new_molecules5_active_properties.csv"
+)
+```
+
